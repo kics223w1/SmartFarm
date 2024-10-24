@@ -36,6 +36,8 @@ android {
 
 dependencies {
 
+    implementation("org.postgresql:postgresql:42.3.1")
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)
@@ -46,4 +48,5 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
 }
