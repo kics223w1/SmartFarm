@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Admin Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+      crossorigin="anonymous"
+    />
+    <link href="/main.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+    <script src="./app.js"></script>
+    <script src="./admin.js"></script>
+    <script src="./auth.js"></script>
+  </head>
+  <body>
+    <noscript
+      ><h2 style="color: #ff0000">
+        Seems your browser doesn't support Javascript! Websocket relies on
+        Javascript being enabled. Please enable Javascript and reload this page!
+      </h2></noscript
+    >
+    <div id="main-content" class="container">
+      <h1>Admin Dashboard</h1>
+
+      <!-- Navigation tabs -->
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a
+            href="#sensor-data"
+            aria-controls="sensor-data"
+            role="tab"
+            data-toggle="tab"
+            >Sensor Data</a
+          >
+        </li>
+        <li role="presentation">
+          <a
+            href="#poomer-control"
+            aria-controls="poomer-control"
+            role="tab"
+            data-toggle="tab"
+            >Poomer Control</a
+          >
+        </li>
+        <li role="presentation">
+          <a
+            href="#admin-panel"
+            aria-controls="admin-panel"
+            role="tab"
+            data-toggle="tab"
+            >Admin Panel</a
+          >
+        </li>
+        <li role="presentation">
+          <a href="#auth" aria-controls="auth" role="tab" data-toggle="tab"
+            >Authentication</a
+          >
+        </li>
+      </ul>
+
+      <!-- Tab content -->
+      <div class="tab-content">
+        <!-- Sensor Data Tab -->
+        <div role="tabpanel" class="tab-pane active" id="sensor-data">
+          <h2>Sensor Data</h2>
+          <form class="form-inline">
+            <div class="form-group">
+              <label for="connect">WebSocket connection:</label>
+              <button id="connect" class="btn btn-default" type="submit">
+                Connect
+              </button>
+              <button
+                id="disconnect"
+                class="btn btn-default"
+                type="submit"
+                disabled="disabled"
+              >
+                Disconnect
+              </button>
+            </div>
+          </form>
+          <table id="conversation" class="table table-striped">
+            <thead>
+              <tr>
+                <th>Sensors data</th>
+              </tr>
+            </thead>
+            <tbody id="greetings"></tbody>
+          </table>
+        </div>
+
+        <!-- Poomer Control Tab -->
+        <div role="tabpanel" class="tab-pane" id="poomer-control">
+          <h2>Poomer Control</h2>
+          <div class="form-group">
+            <label for="poomer-status">Poomer Status:</label>
+            <span id="poomer-status" class="label label-default">Unknown</span>
+          </div>
+          <div class="btn-group" role="group" aria-label="Poomer Controls">
+            <button id="turn-on-poomer" class="btn btn-success">Turn On</button>
+            <button id="turn-off-poomer" class="btn btn-danger">
+              Turn Off
+            </button>
+          </div>
+          <div class="form-group" style="margin-top: 20px">
+            <label for="automation-mode">
+              <input type="checkbox" id="automation-mode" /> Automation Mode
+            </label>
+          </div>
+          <div id="automation-settings" style="display: none">
+            <h3>Automation Settings</h3>
+            <div class="form-group">
+              <label for="start-time">Start Time:</label>
+              <input type="time" id="start-time" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label for="end-time">End Time:</label>
+              <input type="time" id="end-time" class="form-control" />
+            </div>
+            <button id="save-automation" class="btn btn-primary">
+              Save Automation Settings
+            </button>
+          </div>
+        </div>
+
+        <!-- Admin Panel Tab -->
+        <div role="tabpanel" class="tab-pane" id="admin-panel">
+          <h2>Admin Panel</h2>
+          <form id="admin-settings">
+            <div class="form-group">
+              <label for="update-interval">Update Interval (seconds):</label>
+              <input
+                type="number"
+                id="update-interval"
+                class="form-control"
+                min="1"
+                value="5"
+              />
+            </div>
+            <div class="form-group">
+              <label for="alert-threshold">Alert Threshold:</label>
+              <input
+                type="number"
+                id="alert-threshold"
+                class="form-control"
+                min="0"
+                value="100"
+              />
+            </div>
+            <button type="submit" class="btn btn-primary">Save Settings</button>
+          </form>
+        </div>
+
+        <!-- Authentication Tab -->
+        <div role="tabpanel" class="tab-pane" id="auth">
+          <h2>Authentication</h2>
+          <div id="auth-forms">
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form">
+              <h3>Login</h3>
+              <div class="form-group">
+                <label for="login-email">Email:</label>
+                <input
+                  type="email"
+                  id="login-email"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="login-password">Password:</label>
+                <input
+                  type="password"
+                  id="login-password"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signup-form" class="auth-form">
+              <h3>Sign Up</h3>
+              <div class="form-group">
+                <label for="signup-email">Email:</label>
+                <input
+                  type="email"
+                  id="signup-email"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="signup-password">Password:</label>
+                <input
+                  type="password"
+                  id="signup-password"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="signup-confirm-password">Confirm Password:</label>
+                <input
+                  type="password"
+                  id="signup-confirm-password"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <button type="submit" class="btn btn-success">Sign Up</button>
+            </form>
+          </div>
+
+          <!-- User Info and Sign Out -->
+          <div id="user-info" style="display: none">
+            <h3>Welcome, <span id="user-email"></span>!</h3>
+            <button id="sign-out" class="btn btn-danger">Sign Out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Bootstrap JavaScript for tab functionality -->
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+      integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
